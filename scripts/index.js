@@ -62,9 +62,9 @@ descriptionInput.required = true;
 descriptionInput.minLength = 2;
 descriptionInput.maxLength = 200;
 
-// Crear spans
-createErrorSpan(nameInput, "popup__input-error_name");
-createErrorSpan(descriptionInput, "popup__input-error_description");
+// Crear spans (sin enviar clases)
+createErrorSpan(nameInput);
+createErrorSpan(descriptionInput);
 
 // Habilitar validación
 enableValidation([nameInput, descriptionInput], saveButton);
@@ -88,15 +88,12 @@ closeEditButton.addEventListener("click", () => closeModal(editModal));
 // Enviar formulario
 editProfileForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  showInputError(
-    nameInput,
-    nameInput.parentNode.querySelector(".popup__input-error_name")
-  );
-  showInputError(
-    descriptionInput,
-    descriptionInput.parentNode.querySelector(".popup__input-error_description")
-  );
+
+  showInputError(nameInput);
+  showInputError(descriptionInput);
+
   toggleButton(saveButton, [nameInput, descriptionInput]);
+
   if (nameInput.validity.valid && descriptionInput.validity.valid) {
     profileName.textContent = nameInput.value;
     profileDescription.textContent = descriptionInput.value;
@@ -170,9 +167,9 @@ cardNameInput.maxLength = 30;
 cardLinkInput.required = true;
 cardLinkInput.type = "url";
 
-// Crear spans
-createErrorSpan(cardNameInput, "popup__input-error_title");
-createErrorSpan(cardLinkInput, "popup__input-error_url");
+// Crear spans sin clases
+createErrorSpan(cardNameInput);
+createErrorSpan(cardLinkInput);
 
 // Habilitar validación
 enableValidation([cardNameInput, cardLinkInput], createButton);
@@ -192,15 +189,12 @@ closeAddCardButton.addEventListener("click", () => closeModal(addCardModal));
 // Enviar formulario Nuevo Lugar
 newCardForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  showInputError(
-    cardNameInput,
-    cardNameInput.parentNode.querySelector(".popup__input-error_title")
-  );
-  showInputError(
-    cardLinkInput,
-    cardLinkInput.parentNode.querySelector(".popup__input-error_url")
-  );
+
+  showInputError(cardNameInput);
+  showInputError(cardLinkInput);
+
   toggleButton(createButton, [cardNameInput, cardLinkInput]);
+
   if (cardNameInput.validity.valid && cardLinkInput.validity.valid) {
     renderCard(
       { name: cardNameInput.value, link: cardLinkInput.value },

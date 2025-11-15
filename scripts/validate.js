@@ -1,18 +1,28 @@
 // -------------------- VALIDACIÓN FORMULARIOS --------------------
 
 // Crear span de error
-function createErrorSpan(input, className) {
-  let span = input.parentNode.querySelector(`.${className}`);
+function createErrorSpan(input) {
+  let span = input.parentNode.querySelector(
+    `.popup__input-error_${input.name}`
+  );
+
   if (!span) {
     span = document.createElement("span");
-    span.classList.add("popup__input-error", className);
+    span.classList.add(
+      "popup__input-error",
+      `popup__input-error_${input.name}`
+    );
     input.insertAdjacentElement("afterend", span);
   }
   return span;
 }
 
 // Mostrar error
-function showInputError(input, errorElement) {
+function showInputError(input) {
+  const errorElement = input.parentNode.querySelector(
+    `.popup__input-error_${input.name}`
+  );
+
   if (!input.validity.valid) {
     errorElement.textContent = input.validationMessage;
     input.classList.add("popup__input_type_error");
@@ -22,34 +32,34 @@ function showInputError(input, errorElement) {
   }
 }
 
-// Activar/desactivar botón y mostrar visualmente
+// Activar/desactivar botón
 function toggleButton(button, inputs) {
   const isValid = inputs.every((input) => input.validity.valid);
   button.disabled = !isValid;
   button.classList.toggle("button_inactive", !isValid);
 }
 
-// Resetear formulario y botón
+// Resetear formulario
 function resetForm(inputs, button) {
   inputs.forEach((input) => {
     input.classList.remove("popup__input_type_error");
-    const error = input.parentNode.querySelector(".popup__input-error");
+    const error = input.parentNode.querySelector(
+      `.popup__input-error_${input.name}`
+    );
     if (error) error.textContent = "";
   });
+
   if (button) {
     button.disabled = true;
     button.classList.add("button_inactive");
   }
 }
 
-// Inicializar validación de inputs
+// Inicializar validación
 function enableValidation(inputs, button) {
   inputs.forEach((input) => {
-    const errorElement = input.parentNode.querySelector(
-      `.popup__input-error_${input.name}`
-    );
     input.addEventListener("input", () => {
-      showInputError(input, errorElement);
+      showInputError(input);
       toggleButton(button, inputs);
     });
   });
