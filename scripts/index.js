@@ -1,122 +1,170 @@
-// --- POPUPS ---
-const popups = document.querySelectorAll(".popup");
+import {
+  initEditProfileValidation,
+  initNewCardValidation,
+} from "./validate.js";
 
-// Función para abrir popup
-function openPopup(popup) {
-  popup.classList.add("popup_open");
+// -------------------- Tarjetas iniciales --------------------
+const initialCards = [
+  { name: "Latemar", link: "./images/latemar.jpg" },
+  { name: "Montañas Calvas", link: "./images/montanas_calvas.jpg" },
+  {
+    name: "Parque Nacional de la Vanoise",
+    link: "./images/vanois_national_park.jpg",
+  },
+  { name: "Valle de Yosemite", link: "./images/yosemite.jpg" },
+];
+
+// -------------------- Funciones comunes de modal --------------------
+function openModal(modal) {
+  modal.classList.add("popup_is-opened");
   document.addEventListener("keydown", handleEscClose);
 }
 
-// Función para cerrar popup
-function closePopup(popup) {
-  popup.classList.remove("popup_open");
+function closeModal(modal) {
+  modal.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", handleEscClose);
 }
 
-// Cerrar popup con Esc
+function handleOverlayClick(evt) {
+  if (evt.target.classList.contains("popup")) {
+    closeModal(evt.target);
+  }
+}
+
 function handleEscClose(evt) {
   if (evt.key === "Escape") {
-    const openPopup = document.querySelector(".popup_open");
-    if (openPopup) closePopup(openPopup);
+    const openPopup = document.querySelector(".popup_is-opened");
+    if (openPopup) closeModal(openPopup);
   }
 }
 
-// Cerrar popup al hacer clic en superposición
-popups.forEach((popup) => {
-  popup.addEventListener("click", (e) => {
-    if (e.target === popup) closePopup(popup);
-  });
+document.querySelectorAll(".popup").forEach((popup) => {
+  popup.addEventListener("mousedown", handleOverlayClick);
 });
 
-// Botones de cerrar
-const closeButtons = document.querySelectorAll(".popup__close");
-closeButtons.forEach((button) => {
-  const popup = button.closest(".popup");
-  button.addEventListener("click", () => closePopup(popup));
+// -------------------- Modal Perfil --------------------
+const editProfileButton = document.querySelector(".profile__edit-button");
+const editModal = document.querySelector("#edit-popup");
+const closeEditButton = editModal.querySelector(".popup__close");
+const profileName = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
+
+// Inicializar validación
+const editProfileValidation = initEditProfileValidation();
+const nameInput = editModal.querySelector(".popup__input_type_name");
+const descriptionInput = editModal.querySelector(
+  ".popup__input_type_description"
+);
+
+// Abrir popup Editar perfil
+function fillProfileForm() {
+  nameInput.value = profileName.textContent;
+  descriptionInput.value = profileDescription.textContent;
+}
+
+editProfileButton.addEventListener("click", () => {
+  fillProfileForm();
+  editProfileValidation.resetForm();
+  editProfileValidation.toggleSaveButton();
+  openModal(editModal);
 });
 
-// --- VALIDACIÓN FORMULARIOS ---
-// Función general para mostrar mensajes de error
-function validateInput(input) {
-  const errorSpan = input.nextElementSibling;
-  if (!input.validity.valid) {
-    errorSpan.textContent = input.validationMessage;
-    errorSpan.style.color = "red";
-    return false;
-  } else {
-    errorSpan.textContent = "";
-    return true;
-  }
-}
+closeEditButton.addEventListener("click", () => closeModal(editModal));
 
-// Función para activar/desactivar botón según validez
-function toggleButton(form, button) {
-  const inputs = Array.from(form.querySelectorAll("input"));
-  const isValid = inputs.every((input) => input.validity.valid);
-  button.disabled = !isValid;
-  button.style.backgroundColor = isValid ? "#2B6CB0" : "#A0AEC0"; // colores de ejemplo
-}
-
-// --- FORMULARIO EDITAR PERFIL ---
+// Enviar formulario Editar perfil
 const editProfileForm = document.getElementById("edit-profile-form");
-const nameInput = editProfileForm.querySelector('input[name="name"]');
-const descriptionInput = editProfileForm.querySelector(
-  'input[name="description"]'
-);
-const saveProfileButton = editProfileForm.querySelector(
-  'button[type="submit"]'
-);
-
-// Añadimos validación de longitud
-nameInput.setAttribute("required", true);
-nameInput.setAttribute("minlength", 2);
-nameInput.setAttribute("maxlength", 40);
-
-descriptionInput.setAttribute("required", true);
-descriptionInput.setAttribute("minlength", 2);
-descriptionInput.setAttribute("maxlength", 200);
-
-[nameInput, descriptionInput].forEach((input) => {
-  // Insertar un span para error si no existe
-  if (
-    !input.nextElementSibling ||
-    !input.nextElementSibling.classList.contains("error-message")
-  ) {
-    const span = document.createElement("span");
-    span.classList.add("error-message");
-    input.insertAdjacentElement("afterend", span);
+editProfileForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  if (nameInput.validity.valid && descriptionInput.validity.valid) {
+    profileName.textContent = nameInput.value;
+    profileDescription.textContent = descriptionInput.value;
+    closeModal(editModal);
   }
-
-  input.addEventListener("input", () => {
-    validateInput(input);
-    toggleButton(editProfileForm, saveProfileButton);
-  });
 });
 
-// --- FORMULARIO NUEVA TARJETA ---
-const newCardForm = document.getElementById("new-card-form");
-const titleInput = newCardForm.querySelector('input[name="place-name"]');
-const urlInput = newCardForm.querySelector('input[name="link"]');
-const saveCardButton = newCardForm.querySelector('button[type="submit"]');
+// -------------------- Tarjetas dinámicas --------------------
+const cardsContainer = document.querySelector(".cards__list");
+const cardTemplate = document.querySelector("#card-template").content;
 
-titleInput.setAttribute("required", true);
-titleInput.setAttribute("minlength", 2);
-titleInput.setAttribute("maxlength", 30);
-urlInput.setAttribute("required", true);
-urlInput.setAttribute("type", "url");
+// Modal imagen grande
+const imageModal = document.getElementById("image-popup");
+const imageModalCloseButton = imageModal.querySelector(".popup__close");
+const imageModalImg = imageModal.querySelector(".popup__image");
+const imageModalCaption = imageModal.querySelector(".popup__caption");
 
-[titleInput, urlInput].forEach((input) => {
-  if (
-    !input.nextElementSibling ||
-    !input.nextElementSibling.classList.contains("error-message")
-  ) {
-    const span = document.createElement("span");
-    span.classList.add("error-message");
-    input.insertAdjacentElement("afterend", span);
-  }
+imageModalCloseButton.addEventListener("click", () => closeModal(imageModal));
 
-  input.addEventListener("input", () => {
-    validateInput(input);
-    toggleButton(newCardForm, saveCardButton);
+function openImageModal(name, link) {
+  imageModalImg.src = link;
+  imageModalImg.alt = name;
+  imageModalCaption.textContent = name;
+  openModal(imageModal);
+}
+
+function getCardElement({ name, link }) {
+  const cardElement = cardTemplate.cloneNode(true);
+  const cardImage = cardElement.querySelector(".card__image");
+  const cardTitle = cardElement.querySelector(".card__title");
+  const likeButton = cardElement.querySelector(".card__like-button");
+
+  cardImage.src = link;
+  cardImage.alt = name;
+  cardTitle.textContent = name;
+
+  likeButton.addEventListener("click", () => {
+    likeButton.classList.toggle("card__like-button_is-active");
   });
+
+  cardImage.addEventListener("click", () => openImageModal(name, link));
+
+  return cardElement;
+}
+
+function renderCard(cardData, container) {
+  const cardElement = getCardElement(cardData);
+  container.prepend(cardElement);
+}
+
+// Renderizar tarjetas iniciales
+initialCards.forEach((card) => renderCard(card, cardsContainer));
+
+// Eliminar tarjetas
+cardsContainer.addEventListener("click", (event) => {
+  if (event.target.classList.contains("card__delete-button")) {
+    event.target.closest(".card").remove();
+  }
+});
+
+// -------------------- Modal Nuevo Lugar --------------------
+const addCardButton = document.querySelector(".profile__add-button");
+const addCardModal = document.getElementById("new-card-popup");
+const closeAddCardButton = addCardModal.querySelector(".popup__close");
+const newCardForm = document.getElementById("new-card-form");
+const cardNameInput = newCardForm.querySelector(".popup__input_type_card-name");
+const cardLinkInput = newCardForm.querySelector(".popup__input_type_url");
+
+// Inicializar validación
+const newCardValidation = initNewCardValidation();
+
+// Abrir popup Nuevo Lugar
+addCardButton.addEventListener("click", () => {
+  cardNameInput.value = "";
+  cardLinkInput.value = "";
+  newCardValidation.resetForm();
+  newCardValidation.toggleCreateButton();
+  openModal(addCardModal);
+});
+
+closeAddCardButton.addEventListener("click", () => closeModal(addCardModal));
+
+// Enviar formulario Nuevo Lugar
+newCardForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  if (cardNameInput.validity.valid && cardLinkInput.validity.valid) {
+    renderCard(
+      { name: cardNameInput.value, link: cardLinkInput.value },
+      cardsContainer
+    );
+    closeModal(addCardModal);
+  }
 });
