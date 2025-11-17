@@ -9,25 +9,22 @@ const initialCards = [
   { name: "Valle de Yosemite", link: "./images/yosemite.jpg" },
 ];
 
-// -------------------- Funciones comunes de modal --------------------
+// -------------------- Funciones de modal --------------------
 function openModal(modal) {
   modal.classList.add("popup_is-opened");
 }
 function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
 }
-
 function handleOverlayClick(evt) {
   if (evt.target.classList.contains("popup")) closeModal(evt.target);
 }
-
 function handleEscClose(evt) {
   if (evt.key === "Escape") {
     const openPopup = document.querySelector(".popup_is-opened");
     if (openPopup) closeModal(openPopup);
   }
 }
-
 document
   .querySelectorAll(".popup")
   .forEach((popup) => popup.addEventListener("mousedown", handleOverlayClick));
