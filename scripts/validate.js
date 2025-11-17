@@ -1,61 +1,31 @@
-// -------------------- VALIDACIÓN FORMULARIOS --------------------
+// Validación de formularios
 
-// Crear span de error
 function createErrorSpan(input) {
-  let span = input.parentNode.querySelector(
-    `.popup__input-error_${input.name}`
-  );
-
-  if (!span) {
-    span = document.createElement("span");
-    span.classList.add(
-      "popup__input-error",
-      `popup__input-error_${input.name}`
-    );
-    input.insertAdjacentElement("afterend", span);
-  }
+  const span = document.createElement("span");
+  span.classList.add("popup__error-message");
+  input.insertAdjacentElement("afterend", span);
   return span;
 }
 
-// Mostrar error
 function showInputError(input) {
-  const errorElement = input.parentNode.querySelector(
-    `.popup__input-error_${input.name}`
-  );
-
+  const span = input.nextElementSibling;
   if (!input.validity.valid) {
-    errorElement.textContent = input.validationMessage;
-    input.classList.add("popup__input_type_error");
+    span.textContent = input.validationMessage;
   } else {
-    errorElement.textContent = "";
-    input.classList.remove("popup__input_type_error");
+    span.textContent = "";
   }
 }
 
-// Activar/desactivar botón
 function toggleButton(button, inputs) {
-  const isValid = inputs.every((input) => input.validity.valid);
-  button.disabled = !isValid;
-  button.classList.toggle("button_inactive", !isValid);
+  const allValid = inputs.every((input) => input.validity.valid);
+  button.disabled = !allValid;
 }
 
-// Resetear formulario
 function resetForm(inputs, button) {
-  inputs.forEach((input) => {
-    input.classList.remove("popup__input_type_error");
-    const error = input.parentNode.querySelector(
-      `.popup__input-error_${input.name}`
-    );
-    if (error) error.textContent = "";
-  });
-
-  if (button) {
-    button.disabled = true;
-    button.classList.add("button_inactive");
-  }
+  inputs.forEach((input) => (input.value = ""));
+  button.disabled = true;
 }
 
-// Inicializar validación
 function enableValidation(inputs, button) {
   inputs.forEach((input) => {
     input.addEventListener("input", () => {
@@ -64,11 +34,3 @@ function enableValidation(inputs, button) {
     });
   });
 }
-
-export {
-  createErrorSpan,
-  showInputError,
-  toggleButton,
-  resetForm,
-  enableValidation,
-};

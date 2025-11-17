@@ -1,11 +1,3 @@
-import {
-  createErrorSpan,
-  showInputError,
-  toggleButton,
-  resetForm,
-  enableValidation,
-} from "./validate.js";
-
 // -------------------- Tarjetas iniciales --------------------
 const initialCards = [
   { name: "Latemar", link: "./images/latemar.jpg" },
@@ -62,7 +54,7 @@ descriptionInput.required = true;
 descriptionInput.minLength = 2;
 descriptionInput.maxLength = 200;
 
-// Crear spans (sin enviar clases)
+// Crear spans
 createErrorSpan(nameInput);
 createErrorSpan(descriptionInput);
 
@@ -88,12 +80,9 @@ closeEditButton.addEventListener("click", () => closeModal(editModal));
 // Enviar formulario
 editProfileForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
-
   showInputError(nameInput);
   showInputError(descriptionInput);
-
   toggleButton(saveButton, [nameInput, descriptionInput]);
-
   if (nameInput.validity.valid && descriptionInput.validity.valid) {
     profileName.textContent = nameInput.value;
     profileDescription.textContent = descriptionInput.value;
@@ -165,9 +154,8 @@ cardNameInput.required = true;
 cardNameInput.minLength = 2;
 cardNameInput.maxLength = 30;
 cardLinkInput.required = true;
-cardLinkInput.type = "url";
 
-// Crear spans sin clases
+// Crear spans
 createErrorSpan(cardNameInput);
 createErrorSpan(cardLinkInput);
 
@@ -189,12 +177,9 @@ closeAddCardButton.addEventListener("click", () => closeModal(addCardModal));
 // Enviar formulario Nuevo Lugar
 newCardForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
-
   showInputError(cardNameInput);
   showInputError(cardLinkInput);
-
   toggleButton(createButton, [cardNameInput, cardLinkInput]);
-
   if (cardNameInput.validity.valid && cardLinkInput.validity.valid) {
     renderCard(
       { name: cardNameInput.value, link: cardLinkInput.value },
