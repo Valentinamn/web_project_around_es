@@ -1,130 +1,122 @@
-// -------------------- TARJETAS INICIALES --------------------
-const initialCards = [
-  { name: "Latemar", link: "./images/latemar.jpg" },
-  { name: "Montañas Calvas", link: "./images/montanas_calvas.jpg" },
-  {
-    name: "Parque Nacional de la Vanoise",
-    link: "./images/vanois_national_park.jpg",
-  },
-  { name: "Valle de Yosemite", link: "./images/yosemite.jpg" },
-];
+// --- POPUPS ---
+const popups = document.querySelectorAll(".popup");
 
-// -------------------- FUNCIONES MODAL --------------------
-function openModal(modal) {
-  modal.classList.add("popup_is-opened");
+// Función para abrir popup
+function openPopup(popup) {
+  popup.classList.add("popup_open");
+  document.addEventListener("keydown", handleEscClose);
 }
-function closeModal(modal) {
-  modal.classList.remove("popup_is-opened");
+
+// Función para cerrar popup
+function closePopup(popup) {
+  popup.classList.remove("popup_open");
+  document.removeEventListener("keydown", handleEscClose);
 }
-function handleOverlayClick(evt) {
-  if (evt.target.classList.contains("popup")) closeModal(evt.target);
-}
+
+// Cerrar popup con Esc
 function handleEscClose(evt) {
   if (evt.key === "Escape") {
-    const openPopup = document.querySelector(".popup_is-opened");
-    if (openPopup) closeModal(openPopup);
+    const openPopup = document.querySelector(".popup_open");
+    if (openPopup) closePopup(openPopup);
   }
 }
-document
-  .querySelectorAll(".popup")
-  .forEach((popup) => popup.addEventListener("mousedown", handleOverlayClick));
-document.addEventListener("keydown", handleEscClose);
 
-// -------------------- EDITAR PERFIL --------------------
-const editProfileButton = document.querySelector(".profile__edit-button");
-const editModal = document.querySelector("#edit-popup");
-const closeEditButton = editModal.querySelector(".popup__close");
-const profileName = document.querySelector(".profile__title");
-const profileDescription = document.querySelector(".profile__description");
-const nameInput = editModal.querySelector(".popup__input_type_name");
-const descriptionInput = editModal.querySelector(
-  ".popup__input_type_description"
-);
-const editProfileForm = document.getElementById("edit-profile-form");
-const saveButton = editProfileForm.querySelector(".popup__button");
-
-enableValidation([nameInput, descriptionInput], saveButton);
-
-editProfileButton.addEventListener("click", () => {
-  nameInput.value = profileName.textContent;
-  descriptionInput.value = profileDescription.textContent;
-  resetForm([nameInput, descriptionInput], saveButton);
-  openModal(editModal);
-});
-
-closeEditButton.addEventListener("click", () => closeModal(editModal));
-
-editProfileForm.addEventListener("submit", (evt) => {
-  evt.preventDefault();
-  profileName.textContent = nameInput.value;
-  profileDescription.textContent = descriptionInput.value;
-  closeModal(editModal);
-});
-
-// -------------------- NUEVO LUGAR --------------------
-const addCardButton = document.querySelector(".profile__add-button");
-const addCardModal = document.getElementById("new-card-popup");
-const closeAddCardButton = addCardModal.querySelector(".popup__close");
-const newCardForm = document.getElementById("new-card-form");
-const cardNameInput = newCardForm.querySelector(".popup__input_type_card-name");
-const cardLinkInput = newCardForm.querySelector(".popup__input_type_url");
-const createButton = newCardForm.querySelector(".popup__button");
-
-enableValidation([cardNameInput, cardLinkInput], createButton);
-
-addCardButton.addEventListener("click", () => {
-  resetForm([cardNameInput, cardLinkInput], createButton);
-  openModal(addCardModal);
-});
-closeAddCardButton.addEventListener("click", () => closeModal(addCardModal));
-
-newCardForm.addEventListener("submit", (evt) => {
-  evt.preventDefault();
-  renderCard(
-    { name: cardNameInput.value, link: cardLinkInput.value },
-    cardsContainer
-  );
-  closeModal(addCardModal);
-});
-
-// -------------------- TARJETAS DINÁMICAS --------------------
-const cardsContainer = document.querySelector(".cards__list");
-const cardTemplate = document.querySelector("#card-template").content;
-
-function getCardElement({ name, link }) {
-  const card = cardTemplate.cloneNode(true);
-  const img = card.querySelector(".card__image");
-  const title = card.querySelector(".card__title");
-  const likeButton = card.querySelector(".card__like-button");
-
-  img.src = link;
-  img.alt = name;
-  title.textContent = name;
-
-  likeButton.addEventListener("click", () =>
-    likeButton.classList.toggle("card__like-button_is-active")
-  );
-
-  img.addEventListener("click", () => {
-    document.querySelector(".popup__image").src = link;
-    document.querySelector(".popup__image").alt = name;
-    document.querySelector(".popup__caption").textContent = name;
-    openModal(document.getElementById("image-popup"));
+// Cerrar popup al hacer clic en superposición
+popups.forEach((popup) => {
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) closePopup(popup);
   });
+});
 
-  return card;
-}
+// Botones de cerrar
+const closeButtons = document.querySelectorAll(".popup__close");
+closeButtons.forEach((button) => {
+  const popup = button.closest(".popup");
+  button.addEventListener("click", () => closePopup(popup));
+});
 
-function renderCard(data, container) {
-  const card = getCardElement(data);
-  container.prepend(card);
-}
-
-initialCards.forEach((card) => renderCard(card, cardsContainer));
-
-// Eliminar tarjeta
-cardsContainer.addEventListener("click", (evt) => {
-  if (evt.target.classList.contains("card__delete-button")) {
-    evt.target.closest(".card").remove();
+// --- VALIDACIÓN FORMULARIOS ---
+// Función general para mostrar mensajes de error
+function validateInput(input) {
+  const errorSpan = input.nextElementSibling;
+  if (!input.validity.valid) {
+    errorSpan.textContent = input.validationMessage;
+    errorSpan.style.color = "red";
+    return false;
+  } else {
+    errorSpan.textContent = "";
+    return true;
   }
+}
+
+// Función para activar/desactivar botón según validez
+function toggleButton(form, button) {
+  const inputs = Array.from(form.querySelectorAll("input"));
+  const isValid = inputs.every((input) => input.validity.valid);
+  button.disabled = !isValid;
+  button.style.backgroundColor = isValid ? "#2B6CB0" : "#A0AEC0"; // colores de ejemplo
+}
+
+// --- FORMULARIO EDITAR PERFIL ---
+const editProfileForm = document.getElementById("edit-profile-form");
+const nameInput = editProfileForm.querySelector('input[name="name"]');
+const descriptionInput = editProfileForm.querySelector(
+  'input[name="description"]'
+);
+const saveProfileButton = editProfileForm.querySelector(
+  'button[type="submit"]'
+);
+
+// Añadimos validación de longitud
+nameInput.setAttribute("required", true);
+nameInput.setAttribute("minlength", 2);
+nameInput.setAttribute("maxlength", 40);
+
+descriptionInput.setAttribute("required", true);
+descriptionInput.setAttribute("minlength", 2);
+descriptionInput.setAttribute("maxlength", 200);
+
+[nameInput, descriptionInput].forEach((input) => {
+  // Insertar un span para error si no existe
+  if (
+    !input.nextElementSibling ||
+    !input.nextElementSibling.classList.contains("error-message")
+  ) {
+    const span = document.createElement("span");
+    span.classList.add("error-message");
+    input.insertAdjacentElement("afterend", span);
+  }
+
+  input.addEventListener("input", () => {
+    validateInput(input);
+    toggleButton(editProfileForm, saveProfileButton);
+  });
+});
+
+// --- FORMULARIO NUEVA TARJETA ---
+const newCardForm = document.getElementById("new-card-form");
+const titleInput = newCardForm.querySelector('input[name="place-name"]');
+const urlInput = newCardForm.querySelector('input[name="link"]');
+const saveCardButton = newCardForm.querySelector('button[type="submit"]');
+
+titleInput.setAttribute("required", true);
+titleInput.setAttribute("minlength", 2);
+titleInput.setAttribute("maxlength", 30);
+urlInput.setAttribute("required", true);
+urlInput.setAttribute("type", "url");
+
+[titleInput, urlInput].forEach((input) => {
+  if (
+    !input.nextElementSibling ||
+    !input.nextElementSibling.classList.contains("error-message")
+  ) {
+    const span = document.createElement("span");
+    span.classList.add("error-message");
+    input.insertAdjacentElement("afterend", span);
+  }
+
+  input.addEventListener("input", () => {
+    validateInput(input);
+    toggleButton(newCardForm, saveCardButton);
+  });
 });
