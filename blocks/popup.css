@@ -157,3 +157,8 @@
     padding: 0;
   }
 }
+/* Botón desactivado */
+.button_inactive {
+  opacity: 0.5; /* Se ve más apagado */
+  cursor: not-allowed; /* No permite clic */
+}
