@@ -2,9 +2,14 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta content="ie=edge" http-equiv="X-UA-Compatible" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Around The U.S.</title>
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="../vendor/normalize.css" />
+    <link rel="stylesheet" href="../vendor/fonts.css" />
+    <!-- CSS principal -->
     <link href="./pages/index.css" rel="stylesheet" />
   </head>
   <body class="page">
@@ -36,7 +41,6 @@
         </section>
 
         <section class="cards page__section">
-          <!-- Contenedor de tarjetas -->
           <ul class="cards__list"></ul>
 
           <!-- Template para las tarjetas dinámicas -->
@@ -158,6 +162,7 @@
       </div>
     </div>
 
-    <script type="module" src="scripts/index.js"></script>
+    <!-- Script principal -->
+    <script type="module" src="./pages/index.js"></script>
   </body>
 </html>
