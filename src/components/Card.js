@@ -6,7 +6,7 @@ export class Card {
     handleDelete,
     handleLike
   ) {
-    this._data = data;
+    this._data = data; // incluye likes, name, link, _id
     this._name = data.name;
     this._link = data.link;
     this._templateSelector = templateSelector;
@@ -32,12 +32,12 @@ export class Card {
 
     // Like
     this._likeButton.addEventListener("click", () => {
-      this._handleLike(this, this._data, this._likeButton);
+      this._handleLike(this); // ahora solo le pasamos la instancia
     });
 
     // Delete
     this._deleteButton.addEventListener("click", () => {
-      this._handleDelete(this, this._data);
+      this._handleDelete(this);
     });
   }
 
@@ -54,11 +54,18 @@ export class Card {
     this._cardTitle.textContent = this._name;
 
     // Estado inicial del like
-    if (this._isLiked)
-      this._likeButton.classList.add("card__like-button_liked");
+    this.updateLikes(this._data.likes || [], this._data.currentUserId);
 
     this._setEventListeners();
     return this._element;
+  }
+
+  // ✅ Método para actualizar likes
+  updateLikes(likes = [], currentUserId) {
+    this._data.likes = likes;
+    this._isLiked =
+      Array.isArray(likes) && likes.some((like) => like._id === currentUserId);
+    this._likeButton.classList.toggle("card__like-button_liked", this._isLiked);
   }
 
   remove() {

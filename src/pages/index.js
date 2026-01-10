@@ -28,6 +28,9 @@ const editButton = document.querySelector(".profile__edit-button");
 const addButton = document.querySelector(".profile__add-button");
 const avatarButton = document.querySelector(".profile__image");
 
+// -------------------- VARIABLES --------------------
+let currentUserId = null;
+
 // -------------------- INSTANCIAS --------------------
 
 // Usuario
@@ -50,51 +53,49 @@ const cardsSection = new Section(
   cardsContainerSelector
 );
 
-// -------------------- VARIABLES --------------------
-let currentUserId = null;
-
 // -------------------- FUNCIONES --------------------
+
+// Crear tarjeta
 function createCard(data) {
   const card = new Card(
     {
       ...data,
       isLiked: data.likes?.some((like) => like._id === currentUserId) || false,
+      currentUserId: currentUserId,
     },
     cardTemplateSelector,
     (name, link) => imagePopup.open(name, link),
     handleDeleteCard,
     handleLikeCard
   );
+
   return card.generateCard();
 }
 
 // Manejo de likes
-function handleLikeCard(cardInstance, cardData, likeButton) {
-  const method = likeButton.classList.contains("card__like-button_liked")
-    ? api.unlikeCard(cardData._id)
-    : api.likeCard(cardData._id);
+function handleLikeCard(cardInstance) {
+  const method = cardInstance._isLiked
+    ? api.unlikeCard(cardInstance._data._id)
+    : api.likeCard(cardInstance._data._id);
 
   method
     .then((updatedCard) => {
-      likeButton.classList.toggle(
-        "card__like-button_liked",
-        updatedCard.isLiked
-      );
+      cardInstance.updateLikes(updatedCard.likes || [], currentUserId);
     })
-    .catch(console.log);
+    .catch((err) => console.log("Error al actualizar like:", err));
 }
 
 // Manejo de eliminar tarjeta
-function handleDeleteCard(cardInstance, cardData) {
+function handleDeleteCard(cardInstance) {
   confirmDeletePopup.open();
   confirmDeletePopup.setSubmitAction(() => {
     api
-      .deleteCard(cardData._id)
+      .deleteCard(cardInstance._data._id)
       .then(() => {
         cardInstance.remove();
         confirmDeletePopup.close();
       })
-      .catch(console.log);
+      .catch((err) => console.log("Error al eliminar tarjeta:", err));
   });
 }
 
@@ -190,23 +191,21 @@ avatarButton.addEventListener("click", () => {
   avatarPopupInstance.open();
 });
 
-// -------------------- CARGAR DATOS INICIALES --------------------Promise.all([api.getUserInfo(), api.getInitialCards()])
+// -------------------- CARGAR DATOS INICIALES --------------------
 Promise.all([api.getUserInfo(), api.getInitialCards()])
   .then(([userData, cards]) => {
-    // Guardamos el ID real del usuario
     currentUserId = userData._id;
 
-    // Forzar nombre "Valentina Montoya" pero mantener la descripción de la API
+    // Forzar nombre "Valentina Montoya"
     userInfo.setUserInfo({
       name: "Valentina Montoya",
       about: userData.about,
     });
 
-    // Mantener avatar desde la API
     document.querySelector(profileSelectors.avatarSelector).src =
       userData.avatar;
 
-    // Renderizar las tarjetas
+    // Renderizar todas las tarjetas
     cardsSection.setItems(cards);
     cardsSection.renderItems();
   })
