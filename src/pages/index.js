@@ -190,16 +190,23 @@ avatarButton.addEventListener("click", () => {
   avatarPopupInstance.open();
 });
 
-// -------------------- CARGAR DATOS INICIALES --------------------
+// -------------------- CARGAR DATOS INICIALES --------------------Promise.all([api.getUserInfo(), api.getInitialCards()])
 Promise.all([api.getUserInfo(), api.getInitialCards()])
   .then(([userData, cards]) => {
+    // Guardamos el ID real del usuario
     currentUserId = userData._id;
+
+    // Forzar nombre "Valentina Montoya" pero mantener la descripción de la API
     userInfo.setUserInfo({
-      name: userData.name || "Valentina Montoya",
+      name: "Valentina Montoya",
       about: userData.about,
     });
+
+    // Mantener avatar desde la API
     document.querySelector(profileSelectors.avatarSelector).src =
       userData.avatar;
+
+    // Renderizar las tarjetas
     cardsSection.setItems(cards);
     cardsSection.renderItems();
   })
