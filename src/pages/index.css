@@ -1,6 +1,8 @@
-@import url("../vendor/normalize.css");
-@import url("../vendor/fonts.css");
+/* CSS vendor */
+@import url("../../vendor/normalize.css");
+@import url("../../vendor/fonts.css");
 
+/* Bloques internos */
 @import url("../blocks/page.css");
 @import url("../blocks/header.css");
 @import url("../blocks/content.css");

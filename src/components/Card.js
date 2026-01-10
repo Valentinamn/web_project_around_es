@@ -1,44 +1,46 @@
 export class Card {
-  constructor(data, templateSelector, handleCardClick) {
+  constructor(
+    data,
+    templateSelector,
+    handleCardClick,
+    handleDelete,
+    handleLike
+  ) {
+    this._data = data;
     this._name = data.name;
     this._link = data.link;
     this._templateSelector = templateSelector;
     this._handleCardClick = handleCardClick;
+    this._handleDelete = handleDelete;
+    this._handleLike = handleLike;
+    this._isLiked = data.isLiked;
   }
 
-  // Obtiene el template
   _getTemplate() {
     const template = document
       .querySelector(this._templateSelector)
       .content.querySelector(".card")
       .cloneNode(true);
-
     return template;
   }
 
-  // Maneja el botón de like
-  _setLikeButton() {
+  _setEventListeners() {
+    // Imagen
+    this._cardImage.addEventListener("click", () =>
+      this._handleCardClick(this._name, this._link)
+    );
+
+    // Like
     this._likeButton.addEventListener("click", () => {
-      this._likeButton.classList.toggle("card__like-button_is-active");
+      this._handleLike(this, this._data, this._likeButton);
     });
-  }
 
-  // Maneja el botón de eliminar
-  _setDeleteButton() {
+    // Delete
     this._deleteButton.addEventListener("click", () => {
-      this._element.remove();
-      this._element = null;
+      this._handleDelete(this, this._data);
     });
   }
 
-  // Maneja click en la imagen
-  _setImageClick() {
-    this._cardImage.addEventListener("click", () => {
-      this._handleCardClick(this._name, this._link);
-    });
-  }
-
-  // Crea toda la tarjeta
   generateCard() {
     this._element = this._getTemplate();
 
@@ -51,10 +53,16 @@ export class Card {
     this._cardImage.alt = this._name;
     this._cardTitle.textContent = this._name;
 
-    this._setLikeButton();
-    this._setDeleteButton();
-    this._setImageClick();
+    // Estado inicial del like
+    if (this._isLiked)
+      this._likeButton.classList.add("card__like-button_liked");
 
+    this._setEventListeners();
     return this._element;
+  }
+
+  remove() {
+    this._element.remove();
+    this._element = null;
   }
 }

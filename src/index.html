@@ -7,10 +7,9 @@
     <title>Around The U.S.</title>
 
     <!-- Vendor CSS -->
-    <link rel="stylesheet" href="../vendor/normalize.css" />
-    <link rel="stylesheet" href="../vendor/fonts.css" />
-    <!-- CSS principal -->
-    <link href="./pages/index.css" rel="stylesheet" />
+<link rel="stylesheet" href="../vendor/normalize.css" />
+<link rel="stylesheet" href="../vendor/fonts.css" />
+<link rel="stylesheet" href="./pages/index.css" />
   </head>
   <body class="page">
     <div class="page__content">
@@ -21,17 +20,31 @@
           src="./images/logo.svg"
         />
       </header>
+
       <main class="content">
+        <!-- SECCIÓN PERFIL -->
         <section class="profile page__section">
-          <img class="profile__image" src="./images/avatar.jpg" alt="Avatar" />
+          <div class="profile__avatar-container">
+            <img
+              class="profile__image"
+              src="./images/avatar.jpg"
+              alt="Avatar"
+            />
+            <button
+              class="profile__avatar-edit-button"
+              aria-label="Editar avatar"
+              type="button"
+            ></button>
+          </div>
+
           <div class="profile__info">
-            <h1 class="profile__title">Jacques Cousteau</h1>
+            <h1 class="profile__title">Valentina Montoya</h1>
             <button
               aria-label="Editar perfil"
               class="profile__edit-button"
               type="button"
             ></button>
-            <p class="profile__description">Explorador</p>
+            <p class="profile__description">Exploradora</p>
           </div>
           <button
             aria-label="Agregar tarjeta"
@@ -40,6 +53,7 @@
           ></button>
         </section>
 
+        <!-- SECCIÓN TARJETAS -->
         <section class="cards page__section">
           <ul class="cards__list"></ul>
 
@@ -69,7 +83,7 @@
         <p class="footer__copyright">© 2025 Around The U.S.</p>
       </footer>
 
-      <!-- Popup Editar perfil -->
+      <!-- POPUP EDITAR PERFIL -->
       <div class="popup" id="edit-popup">
         <div class="popup__content">
           <button
@@ -81,7 +95,7 @@
           <form class="popup__form" id="edit-profile-form">
             <input
               id="profile-name"
-              class="popup__input popup__input_type_name"
+              class="popup_input popup_input_type_name"
               name="name"
               placeholder="Nombre"
               type="text"
@@ -93,7 +107,7 @@
 
             <input
               id="profile-description"
-              class="popup__input popup__input_type_description"
+              class="popup_input popup_input_type_description"
               name="description"
               placeholder="Acerca de mí"
               type="text"
@@ -111,7 +125,7 @@
         </div>
       </div>
 
-      <!-- Popup Nueva tarjeta -->
+      <!-- POPUP NUEVA TARJETA -->
       <div class="popup" id="new-card-popup">
         <div class="popup__content">
           <button
@@ -123,7 +137,7 @@
           <form class="popup__form" id="new-card-form">
             <input
               id="card-title"
-              class="popup__input popup__input_type_card-name"
+              class="popup_input popup_input_type_card-name"
               name="place-name"
               placeholder="Título"
               required
@@ -135,7 +149,7 @@
 
             <input
               id="card-link"
-              class="popup__input popup__input_type_url"
+              class="popup_input popup_input_type_url"
               name="link"
               placeholder="Enlace a la imagen"
               required
@@ -148,19 +162,61 @@
         </div>
       </div>
 
-      <!-- Popup Imagen -->
-      <div class="popup" id="image-popup">
-        <div class="popup__content popup__content_content_image">
+      <!-- POPUP CAMBIAR AVATAR -->
+      <div class="popup" id="avatar-popup">
+        <div class="popup__content">
           <button
             aria-label="Cerrar ventana emergente"
             class="popup__close"
             type="button"
           ></button>
-          <img alt="" class="popup__image" src="#" />
-          <p class="popup__caption"></p>
+          <h3 class="popup__title">Actualizar avatar</h3>
+          <form class="popup__form" id="avatar-form">
+            <input
+              id="avatar-link"
+              class="popup_input popup_input_type_url"
+              name="avatar"
+              placeholder="Enlace de la imagen"
+              required
+              type="url"
+            />
+            <span class="popup__input-error" id="avatar-link-error"></span>
+            <button class="button popup__button" type="submit">Guardar</button>
+          </form>
         </div>
       </div>
-    </div>
+
+      <!-- POPUP CONFIRMACIÓN ELIMINAR TARJETA -->
+      <div class="popup" id="confirm-popup">
+        <div class="popup__content">
+          <button
+            aria-label="Cerrar ventana emergente"
+            class="popup__close"
+            type="button"
+          ></button>
+          <h3 class="popup__title">¿Estás seguro?</h3>
+          <button
+            id="confirm-delete"
+            class="button popup__button"
+            type="button"
+          >
+            Sí
+          </button>
+        </div>
+      </div>
+
+      <!-- POPUP IMAGEN -->
+    <div class="popup" id="image-popup">
+  <div class="popup__content popup__content_content_image">
+    <button
+      aria-label="Cerrar ventana emergente"
+      class="popup__close"
+      type="button"
+    ></button>
+    <img class="popup__image" src="#" alt="" />
+    <p class="popup__caption"></p>
+  </div>
+</div>
 
     <!-- Script principal -->
     <script type="module" src="./pages/index.js"></script>
